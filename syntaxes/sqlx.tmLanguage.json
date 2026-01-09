@@ -1,0 +1,448 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "SQLX",
+  "scopeName": "source.sqlx",
+  "fileTypes": ["sqlx"],
+  "patterns": [
+    { "include": "#config-block" },
+    { "include": "#js-block" },
+    { "include": "#pre-operations-block" },
+    { "include": "#post-operations-block" },
+    { "include": "#sql-body" }
+  ],
+  "repository": {
+    "config-block": {
+      "name": "meta.block.config.sqlx",
+      "begin": "^\\s*(config)\\s*(\\{)",
+      "beginCaptures": {
+        "1": { "name": "keyword.control.config.sqlx" },
+        "2": { "name": "punctuation.definition.block.begin.sqlx" }
+      },
+      "end": "(\\})",
+      "endCaptures": {
+        "1": { "name": "punctuation.definition.block.end.sqlx" }
+      },
+      "patterns": [
+        { "include": "#config-object" }
+      ]
+    },
+    "config-object": {
+      "patterns": [
+        { "include": "#config-comments" },
+        { "include": "#config-property" },
+        { "include": "#config-nested-object" },
+        { "include": "#config-array" },
+        { "include": "#config-string" },
+        { "include": "#config-number" },
+        { "include": "#config-boolean" }
+      ]
+    },
+    "config-comments": {
+      "patterns": [
+        {
+          "name": "comment.line.double-slash.sqlx",
+          "match": "//.*$"
+        },
+        {
+          "name": "comment.block.sqlx",
+          "begin": "/\\*",
+          "end": "\\*/"
+        }
+      ]
+    },
+    "config-property": {
+      "patterns": [
+        {
+          "name": "meta.property.config.sqlx",
+          "match": "\\b(type|description|schema|database|name|dependencies|tags|disabled|hermetic|protected|uniqueKey|uniqueKeys|onSchemaChange|assertions|columns|bigquery|materialized|partitionBy|clusterBy|labels|requirePartitionFilter|partitionExpirationDays|iceberg|nonNull|rowConditions|bucket_name)\\s*(:)",
+          "captures": {
+            "1": { "name": "variable.other.property.sqlx" },
+            "2": { "name": "punctuation.separator.key-value.sqlx" }
+          }
+        },
+        {
+          "name": "meta.property.custom.sqlx",
+          "match": "([a-zA-Z_][a-zA-Z0-9_]*)\\s*(:)",
+          "captures": {
+            "1": { "name": "variable.other.property.sqlx" },
+            "2": { "name": "punctuation.separator.key-value.sqlx" }
+          }
+        }
+      ]
+    },
+    "config-nested-object": {
+      "name": "meta.object.config.sqlx",
+      "begin": "(\\{)",
+      "beginCaptures": {
+        "1": { "name": "punctuation.definition.block.begin.sqlx" }
+      },
+      "end": "(\\})",
+      "endCaptures": {
+        "1": { "name": "punctuation.definition.block.end.sqlx" }
+      },
+      "patterns": [
+        { "include": "#config-object" }
+      ]
+    },
+    "config-array": {
+      "name": "meta.array.config.sqlx",
+      "begin": "(\\[)",
+      "beginCaptures": {
+        "1": { "name": "punctuation.definition.array.begin.sqlx" }
+      },
+      "end": "(\\])",
+      "endCaptures": {
+        "1": { "name": "punctuation.definition.array.end.sqlx" }
+      },
+      "patterns": [
+        { "include": "#config-string" },
+        { "include": "#config-number" },
+        { "include": "#config-boolean" },
+        { "include": "#config-nested-object" },
+        { "include": "#config-array" }
+      ]
+    },
+    "config-string": {
+      "patterns": [
+        {
+          "name": "string.quoted.double.sqlx",
+          "begin": "\"",
+          "beginCaptures": {
+            "0": { "name": "punctuation.definition.string.begin.sqlx" }
+          },
+          "end": "\"",
+          "endCaptures": {
+            "0": { "name": "punctuation.definition.string.end.sqlx" }
+          },
+          "patterns": [
+            {
+              "name": "constant.character.escape.sqlx",
+              "match": "\\\\."
+            },
+            {
+              "name": "constant.language.type.sqlx",
+              "match": "\\b(table|view|incremental|assertion|operations)\\b"
+            }
+          ]
+        },
+        {
+          "name": "string.quoted.single.sqlx",
+          "begin": "'",
+          "beginCaptures": {
+            "0": { "name": "punctuation.definition.string.begin.sqlx" }
+          },
+          "end": "'",
+          "endCaptures": {
+            "0": { "name": "punctuation.definition.string.end.sqlx" }
+          },
+          "patterns": [
+            {
+              "name": "constant.character.escape.sqlx",
+              "match": "\\\\."
+            }
+          ]
+        }
+      ]
+    },
+    "config-number": {
+      "name": "constant.numeric.sqlx",
+      "match": "\\b[0-9]+(\\.[0-9]+)?\\b"
+    },
+    "config-boolean": {
+      "name": "constant.language.boolean.sqlx",
+      "match": "\\b(true|false)\\b"
+    },
+    "js-block": {
+      "name": "meta.block.js.sqlx",
+      "begin": "^\\s*(js)\\s*(\\{)",
+      "beginCaptures": {
+        "1": { "name": "keyword.control.js.sqlx" },
+        "2": { "name": "punctuation.definition.block.begin.sqlx" }
+      },
+      "end": "^\\s*(\\})",
+      "endCaptures": {
+        "1": { "name": "punctuation.definition.block.end.sqlx" }
+      },
+      "patterns": [
+        { "include": "#javascript-body" }
+      ]
+    },
+    "javascript-body": {
+      "patterns": [
+        { "include": "#js-comments" },
+        { "include": "#js-string" },
+        { "include": "#js-template-string" },
+        { "include": "#js-keywords" },
+        { "include": "#js-function" },
+        { "include": "#js-number" },
+        { "include": "#js-boolean" },
+        { "include": "#sqlx-functions" }
+      ]
+    },
+    "js-comments": {
+      "patterns": [
+        {
+          "name": "comment.line.double-slash.js.sqlx",
+          "match": "//.*$"
+        },
+        {
+          "name": "comment.block.js.sqlx",
+          "begin": "/\\*",
+          "end": "\\*/"
+        }
+      ]
+    },
+    "js-string": {
+      "patterns": [
+        {
+          "name": "string.quoted.double.js.sqlx",
+          "begin": "\"",
+          "end": "\"",
+          "patterns": [
+            { "match": "\\\\.", "name": "constant.character.escape.js.sqlx" }
+          ]
+        },
+        {
+          "name": "string.quoted.single.js.sqlx",
+          "begin": "'",
+          "end": "'",
+          "patterns": [
+            { "match": "\\\\.", "name": "constant.character.escape.js.sqlx" }
+          ]
+        }
+      ]
+    },
+    "js-template-string": {
+      "name": "string.template.js.sqlx",
+      "begin": "`",
+      "beginCaptures": {
+        "0": { "name": "punctuation.definition.string.template.begin.sqlx" }
+      },
+      "end": "`",
+      "endCaptures": {
+        "0": { "name": "punctuation.definition.string.template.end.sqlx" }
+      },
+      "patterns": [
+        { "include": "#interpolation" },
+        { "match": "\\\\.", "name": "constant.character.escape.js.sqlx" }
+      ]
+    },
+    "js-keywords": {
+      "name": "keyword.control.js.sqlx",
+      "match": "\\b(const|let|var|function|return|if|else|for|while|do|switch|case|break|continue|throw|try|catch|finally|new|typeof|instanceof|in|of|class|extends|import|export|default|async|await|yield)\\b"
+    },
+    "js-function": {
+      "name": "meta.function.js.sqlx",
+      "match": "\\b([a-zA-Z_$][a-zA-Z0-9_$]*)\\s*(\\()",
+      "captures": {
+        "1": { "name": "entity.name.function.js.sqlx" },
+        "2": { "name": "punctuation.definition.parameters.begin.sqlx" }
+      }
+    },
+    "js-number": {
+      "name": "constant.numeric.js.sqlx",
+      "match": "\\b[0-9]+(\\.[0-9]+)?([eE][+-]?[0-9]+)?\\b"
+    },
+    "js-boolean": {
+      "name": "constant.language.boolean.js.sqlx",
+      "match": "\\b(true|false|null|undefined)\\b"
+    },
+    "pre-operations-block": {
+      "name": "meta.block.pre-operations.sqlx",
+      "begin": "^\\s*(pre_operations)\\s*(\\{)",
+      "beginCaptures": {
+        "1": { "name": "keyword.control.operations.sqlx" },
+        "2": { "name": "punctuation.definition.block.begin.sqlx" }
+      },
+      "end": "^\\s*(\\})",
+      "endCaptures": {
+        "1": { "name": "punctuation.definition.block.end.sqlx" }
+      },
+      "patterns": [
+        { "include": "#sql-with-interpolation" }
+      ]
+    },
+    "post-operations-block": {
+      "name": "meta.block.post-operations.sqlx",
+      "begin": "^\\s*(post_operations)\\s*(\\{)",
+      "beginCaptures": {
+        "1": { "name": "keyword.control.operations.sqlx" },
+        "2": { "name": "punctuation.definition.block.begin.sqlx" }
+      },
+      "end": "^\\s*(\\})",
+      "endCaptures": {
+        "1": { "name": "punctuation.definition.block.end.sqlx" }
+      },
+      "patterns": [
+        { "include": "#sql-with-interpolation" }
+      ]
+    },
+    "sql-body": {
+      "patterns": [
+        { "include": "#sql-with-interpolation" }
+      ]
+    },
+    "sql-with-interpolation": {
+      "patterns": [
+        { "include": "#interpolation" },
+        { "include": "#sql-comments" },
+        { "include": "#sql-strings" },
+        { "include": "#sql-keywords" },
+        { "include": "#sql-functions" },
+        { "include": "#sql-operators" },
+        { "include": "#sql-numbers" }
+      ]
+    },
+    "interpolation": {
+      "name": "meta.interpolation.sqlx",
+      "begin": "(\\$\\{)",
+      "beginCaptures": {
+        "1": { "name": "punctuation.section.interpolation.begin.sqlx" }
+      },
+      "end": "(\\})",
+      "endCaptures": {
+        "1": { "name": "punctuation.section.interpolation.end.sqlx" }
+      },
+      "patterns": [
+        { "include": "#sqlx-functions" },
+        { "include": "#js-template-string" },
+        { "include": "#js-string" },
+        { "include": "#js-keywords" },
+        { "include": "#js-number" },
+        { "include": "#js-boolean" },
+        { "include": "#js-function" }
+      ]
+    },
+    "sqlx-functions": {
+      "patterns": [
+        {
+          "name": "meta.function-call.sqlx",
+          "match": "\\b(ref|self|resolve|when|incremental|name|schema|database|assert|operate|publish|declare)\\s*(\\()",
+          "captures": {
+            "1": { "name": "support.function.sqlx" },
+            "2": { "name": "punctuation.definition.arguments.begin.sqlx" }
+          }
+        }
+      ]
+    },
+    "sql-comments": {
+      "patterns": [
+        {
+          "name": "comment.line.double-dash.sql.sqlx",
+          "match": "--.*$"
+        },
+        {
+          "name": "comment.block.sql.sqlx",
+          "begin": "/\\*",
+          "end": "\\*/"
+        }
+      ]
+    },
+    "sql-strings": {
+      "patterns": [
+        {
+          "name": "string.quoted.single.sql.sqlx",
+          "begin": "'",
+          "beginCaptures": {
+            "0": { "name": "punctuation.definition.string.begin.sql.sqlx" }
+          },
+          "end": "'",
+          "endCaptures": {
+            "0": { "name": "punctuation.definition.string.end.sql.sqlx" }
+          },
+          "patterns": [
+            { "match": "''", "name": "constant.character.escape.sql.sqlx" }
+          ]
+        },
+        {
+          "name": "string.quoted.double.sql.sqlx",
+          "begin": "\"",
+          "beginCaptures": {
+            "0": { "name": "punctuation.definition.string.begin.sql.sqlx" }
+          },
+          "end": "\"",
+          "endCaptures": {
+            "0": { "name": "punctuation.definition.string.end.sql.sqlx" }
+          },
+          "patterns": [
+            { "match": "\"\"", "name": "constant.character.escape.sql.sqlx" }
+          ]
+        },
+        {
+          "name": "string.quoted.backtick.sql.sqlx",
+          "begin": "`",
+          "beginCaptures": {
+            "0": { "name": "punctuation.definition.string.begin.sql.sqlx" }
+          },
+          "end": "`",
+          "endCaptures": {
+            "0": { "name": "punctuation.definition.string.end.sql.sqlx" }
+          },
+          "patterns": [
+            { "include": "#interpolation" }
+          ]
+        }
+      ]
+    },
+    "sql-keywords": {
+      "patterns": [
+        {
+          "name": "keyword.clause.sql.sqlx",
+          "match": "(?i)\\b(SELECT|FROM|WHERE|AND|OR|NOT|IN|EXISTS|BETWEEN|LIKE|ILIKE|IS|NULL|AS|ON|USING|JOIN|INNER|LEFT|RIGHT|FULL|OUTER|CROSS|NATURAL|GROUP|BY|HAVING|ORDER|ASC|DESC|NULLS|FIRST|LAST|LIMIT|OFFSET|FETCH|NEXT|ROWS|ONLY|UNION|INTERSECT|EXCEPT|ALL|DISTINCT|WITH|RECURSIVE|CASE|WHEN|THEN|ELSE|END|CAST|OVER|PARTITION|WINDOW|ROWS|RANGE|UNBOUNDED|PRECEDING|FOLLOWING|CURRENT|ROW)\\b"
+        },
+        {
+          "name": "keyword.dml.sql.sqlx",
+          "match": "(?i)\\b(INSERT|INTO|VALUES|UPDATE|SET|DELETE|TRUNCATE|MERGE|UPSERT)\\b"
+        },
+        {
+          "name": "keyword.ddl.sql.sqlx",
+          "match": "(?i)\\b(CREATE|ALTER|DROP|TABLE|VIEW|INDEX|SCHEMA|DATABASE|TEMP|TEMPORARY|IF|REPLACE|OR|CONSTRAINT|PRIMARY|KEY|FOREIGN|REFERENCES|UNIQUE|CHECK|DEFAULT|NOT|AUTO_INCREMENT|IDENTITY|SERIAL|BIGSERIAL|SMALLSERIAL)\\b"
+        },
+        {
+          "name": "keyword.dcl.sql.sqlx",
+          "match": "(?i)\\b(GRANT|REVOKE|ROLE|TO|ROLES|PRIVILEGES|EXECUTE|USAGE)\\b"
+        },
+        {
+          "name": "keyword.other.sql.sqlx",
+          "match": "(?i)\\b(DECLARE|INTERVAL|DAY|HOUR|MINUTE|SECOND|YEAR|MONTH|WEEK|EXTRACT|EPOCH|TIMEZONE|AT|TIME|ZONE)\\b"
+        },
+        {
+          "name": "storage.type.sql.sqlx",
+          "match": "(?i)\\b(INT|INTEGER|BIGINT|SMALLINT|TINYINT|FLOAT|DOUBLE|DECIMAL|NUMERIC|REAL|BOOLEAN|BOOL|CHAR|VARCHAR|TEXT|STRING|BYTES|BLOB|CLOB|DATE|TIME|TIMESTAMP|DATETIME|INTERVAL|ARRAY|STRUCT|RECORD|JSON|JSONB|UUID|GEOGRAPHY|GEOMETRY|INT64|FLOAT64|BIGNUMERIC)\\b"
+        }
+      ]
+    },
+    "sql-functions": {
+      "name": "support.function.sql.sqlx",
+      "match": "(?i)\\b(COUNT|SUM|AVG|MIN|MAX|COALESCE|NULLIF|IFNULL|NVL|GREATEST|LEAST|ABS|CEIL|CEILING|FLOOR|ROUND|TRUNC|TRUNCATE|MOD|POWER|SQRT|EXP|LOG|LN|LOG10|LOG2|SIGN|RAND|RANDOM|CONCAT|CONCAT_WS|SUBSTR|SUBSTRING|LEFT|RIGHT|LENGTH|LEN|CHAR_LENGTH|CHARACTER_LENGTH|UPPER|LOWER|INITCAP|TRIM|LTRIM|RTRIM|LPAD|RPAD|REPLACE|TRANSLATE|REVERSE|SPLIT|SPLIT_PART|REGEXP_EXTRACT|REGEXP_REPLACE|REGEXP_CONTAINS|REGEXP_MATCH|REGEXP_MATCHES|TO_CHAR|TO_DATE|TO_TIMESTAMP|TO_NUMBER|DATE|TIME|TIMESTAMP|DATETIME|DATE_ADD|DATE_SUB|DATE_DIFF|DATEDIFF|DATEADD|DATE_TRUNC|DATETIME_TRUNC|TIMESTAMP_TRUNC|CURRENT_DATE|CURRENT_TIME|CURRENT_TIMESTAMP|NOW|GETDATE|SYSDATE|EXTRACT|YEAR|MONTH|DAY|HOUR|MINUTE|SECOND|DAYOFWEEK|DAYOFYEAR|WEEK|QUARTER|FORMAT|FORMAT_DATE|FORMAT_DATETIME|FORMAT_TIMESTAMP|PARSE_DATE|PARSE_DATETIME|PARSE_TIMESTAMP|SAFE_CAST|TRY_CAST|SAFE_DIVIDE|SAFE_MULTIPLY|SAFE_ADD|SAFE_SUBTRACT|SAFE_NEGATE|GENERATE_ARRAY|GENERATE_DATE_ARRAY|UNNEST|ARRAY_AGG|STRING_AGG|LISTAGG|GROUP_CONCAT|ANY_VALUE|FIRST_VALUE|LAST_VALUE|NTH_VALUE|LAG|LEAD|ROW_NUMBER|RANK|DENSE_RANK|NTILE|PERCENT_RANK|CUME_DIST|PERCENTILE_CONT|PERCENTILE_DISC|APPROX_COUNT_DISTINCT|APPROX_QUANTILES|APPROX_TOP_COUNT|HLL_COUNT|FARM_FINGERPRINT|MD5|SHA1|SHA256|SHA512|HASH|JSON_EXTRACT|JSON_EXTRACT_SCALAR|JSON_QUERY|JSON_VALUE|TO_JSON|TO_JSON_STRING|PARSE_JSON|ST_GEOGPOINT|ST_MAKELINE|ST_MAKEPOLYGON|ST_DISTANCE|ST_CONTAINS|ST_INTERSECTS|ST_WITHIN|ST_AREA|ST_LENGTH|ST_CENTROID|ST_UNION|ST_BUFFER|ST_ASTEXT|ST_ASGEOJSON|ST_GEOGFROMTEXT|ST_GEOGFROMGEOJSON|STRUCT|ARRAY|OFFSET|ORDINAL|SAFE_OFFSET|SAFE_ORDINAL|EXISTS|COUNTIF|SUMIF|AVGIF|LOGICAL_AND|LOGICAL_OR|BIT_AND|BIT_OR|BIT_XOR|CORR|COVAR_POP|COVAR_SAMP|STDDEV|STDDEV_POP|STDDEV_SAMP|VARIANCE|VAR_POP|VAR_SAMP|ERROR|RANGE_BUCKET|SESSION_USER|CURRENT_USER)\\b"
+    },
+    "sql-operators": {
+      "patterns": [
+        {
+          "name": "keyword.operator.comparison.sql.sqlx",
+          "match": "(=|<>|!=|<|>|<=|>=)"
+        },
+        {
+          "name": "keyword.operator.arithmetic.sql.sqlx",
+          "match": "(\\+|-|\\*|/|%|\\|\\||\\^|&|~)"
+        },
+        {
+          "name": "keyword.operator.assignment.sql.sqlx",
+          "match": ":="
+        }
+      ]
+    },
+    "sql-numbers": {
+      "patterns": [
+        {
+          "name": "constant.numeric.sql.sqlx",
+          "match": "\\b[0-9]+(\\.[0-9]+)?([eE][+-]?[0-9]+)?\\b"
+        },
+        {
+          "name": "constant.numeric.hex.sql.sqlx",
+          "match": "\\b0[xX][0-9a-fA-F]+\\b"
+        }
+      ]
+    }
+  }
+}

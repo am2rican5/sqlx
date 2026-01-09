@@ -1,0 +1,35 @@
+{
+  "name": "sqlx",
+  "displayName": "sqlx",
+  "description": "BigQuery sqlx language support",
+  "repository": "https://github.com/am2rican5/sqlx",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.108.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "contributes": {
+    "languages": [
+      {
+        "id": "sqlx",
+        "aliases": [
+          "SQLX",
+          "sqlx"
+        ],
+        "extensions": [
+          ".sqlx"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "sqlx",
+        "scopeName": "source.sqlx",
+        "path": "./syntaxes/sqlx.tmLanguage.json"
+      }
+    ]
+  }
+}
