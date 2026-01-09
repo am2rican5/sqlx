@@ -3,6 +3,7 @@
   "displayName": "sqlx",
   "description": "BigQuery sqlx language support",
   "repository": "https://github.com/am2rican5/sqlx",
+  "publisher": "am2rican5",
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.108.0"
