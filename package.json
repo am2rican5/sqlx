@@ -1,7 +1,7 @@
 {
   "name": "sqlx",
   "displayName": "sqlx",
-  "description": "BigQuery sqlx language support",
+  "description": "BigQuery sqlx language support with Dataform CLI integration",
   "repository": "https://github.com/am2rican5/sqlx",
   "publisher": "am2rican5",
   "version": "0.0.1",
@@ -9,7 +9,13 @@
     "vscode": "^1.108.0"
   },
   "categories": [
-    "Programming Languages"
+    "Programming Languages",
+    "Other"
+  ],
+  "main": "./out/extension.js",
+  "activationEvents": [
+    "workspaceContains:dataform.json",
+    "workspaceContains:workflow_settings.yaml"
   ],
   "contributes": {
     "languages": [
@@ -31,6 +37,133 @@
         "scopeName": "source.sqlx",
         "path": "./syntaxes/sqlx.tmLanguage.json"
       }
-    ]
+    ],
+    "commands": [
+      {
+        "command": "sqlx.compile",
+        "title": "Dataform: Compile Project"
+      },
+      {
+        "command": "sqlx.run",
+        "title": "Dataform: Run Project"
+      },
+      {
+        "command": "sqlx.runDryRun",
+        "title": "Dataform: Run Project (Dry Run)"
+      },
+      {
+        "command": "sqlx.test",
+        "title": "Dataform: Run Tests"
+      },
+      {
+        "command": "sqlx.runCurrentFile",
+        "title": "Dataform: Run Current File"
+      },
+      {
+        "command": "sqlx.runFullRefreshCurrentFile",
+        "title": "Dataform: Run Current File (Full Refresh)"
+      },
+      {
+        "command": "sqlx.init",
+        "title": "Dataform: Initialize Project"
+      },
+      {
+        "command": "sqlx.initCreds",
+        "title": "Dataform: Initialize Credentials"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "when": "resourceLangId == sqlx",
+          "command": "sqlx.runCurrentFile",
+          "group": "navigation"
+        },
+        {
+          "when": "resourceLangId == sqlx",
+          "command": "sqlx.compile",
+          "group": "navigation"
+        }
+      ],
+      "explorer/context": [
+        {
+          "when": "resourceLangId == sqlx",
+          "command": "sqlx.runCurrentFile",
+          "group": "navigation"
+        }
+      ]
+    },
+    "keybindings": [
+      {
+        "command": "sqlx.compile",
+        "key": "ctrl+shift+c",
+        "mac": "cmd+shift+c",
+        "when": "editorTextFocus && resourceLangId == sqlx"
+      },
+      {
+        "command": "sqlx.runCurrentFile",
+        "key": "ctrl+shift+r",
+        "mac": "cmd+shift+r",
+        "when": "editorTextFocus && resourceLangId == sqlx"
+      }
+    ],
+    "configuration": {
+      "title": "SQLX / Dataform",
+      "properties": {
+        "sqlx.dataformCliPath": {
+          "type": "string",
+          "default": "dataform",
+          "description": "Path to the Dataform CLI executable"
+        },
+        "sqlx.runOptions.dryRun": {
+          "type": "boolean",
+          "default": false,
+          "description": "Run in dry-run mode by default (validate without executing)"
+        },
+        "sqlx.runOptions.runTests": {
+          "type": "boolean",
+          "default": false,
+          "description": "Include tests when running"
+        },
+        "sqlx.runOptions.verbose": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable verbose output"
+        },
+        "sqlx.runOptions.vars": {
+          "type": "object",
+          "default": {},
+          "description": "Variables to pass to Dataform (key-value pairs)"
+        },
+        "sqlx.runOptions.schemaSuffix": {
+          "type": "string",
+          "default": "",
+          "description": "Schema suffix for development branches"
+        },
+        "sqlx.terminal.reuseTerminal": {
+          "type": "boolean",
+          "default": true,
+          "description": "Reuse the same terminal for Dataform commands"
+        },
+        "sqlx.terminal.clearBeforeRun": {
+          "type": "boolean",
+          "default": true,
+          "description": "Clear terminal before running commands"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "lint": "eslint src --ext ts",
+    "package": "vsce package"
+  },
+  "devDependencies": {
+    "@types/node": "^20.x",
+    "@types/vscode": "^1.108.0",
+    "@vscode/vsce": "^2.22.0",
+    "typescript": "^5.3.0"
   }
 }
